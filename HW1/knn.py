@@ -1,8 +1,11 @@
 import numpy as np
+import statistics
 
-COLUMNS = 87
+COLUMNS = 86
 ROWS = 8000
 NEIGHBORS = 1
+TEST_FILE_NAME = 'test_pub.csv'
+TRAIN_FILE_NAME = 'train.csv'
 
 def importData(file_name):
     data = np.genfromtxt(file_name, delimiter=',')
@@ -13,17 +16,40 @@ def importData(file_name):
 #x and y are both np arrays of features, returns the euclidian distance
 def getNeighbors(training_data, test_point, numNeighbors):
     dists = np.linalg.norm(training_data - test_point, axis=1)
-    print(dists)
-    print(np.argsort(dists))
+    return np.argsort(dists)[:NEIGHBORS]
 
-def kNNClassify(X, Y, x, k):
-    print()
+def kNNClassify(train_data, test_point, numNeighbors):
+    #Doesn't use the first and last column since it's the income and id features
+    nearestK = getNeighbors(train_data[:, 1:COLUMNS], test_point[1:COLUMNS], NEIGHBORS)
+    return int(statistics.mode([train_data[i, COLUMNS] for i in nearestK]))
+
+def evaluate_performance(test_data, train_data):
+    correctClass = 0
+    totalTested = 0
+    for i in test_data:
+        output = kNNClassify(train_data, i, NEIGHBORS)
+        if output == int(i[COLUMNS]):
+            correctClass += 1
+        totalTested += 1
+        print(int(i[0]), output)
+    print("performance:", correctClass / totalTested)
 
 if __name__ == "__main__":
-    train_data = importData('train.csv')
-    test_data = importData('test_pub.csv')
+    train_data = importData(TRAIN_FILE_NAME)
+    #test_data = importData('test_pub.csv')
 
-    #Calculates distance between vectors, doesn't use id or income as a feature
+    test_data = train_data[(int(3*ROWS/4) + 1):]
+    train_data = train_data[:int(3*ROWS/4)]
 
-    getNeighbors(train_data[:, 1:COLUMNS - 1], train_data[1, 1: COLUMNS - 1], NEIGHBORS)
-    #calculate_distance(train_data[0, 1:COLUMNS - 1], train_data[1, 1:COLUMNS - 1])
+    print("id, income")
+    correctClass = 0
+    totalTested = 0
+    for i in test_data:
+        output = kNNClassify(train_data, i, NEIGHBORS)
+        if output == int(i[COLUMNS]):
+            correctClass += 1
+        totalTested += 1
+        print(int(i[0]), output)
+    print("performance:", correctClass / totalTested)
+
+
