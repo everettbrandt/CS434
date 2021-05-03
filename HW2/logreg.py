@@ -9,7 +9,7 @@ logging.basicConfig(
 
 # GLOBAL PARAMETERS FOR STOCHASTIC GRADIENT DESCENT
 step_size=0.0001
-max_iters=1000
+max_iters=200
 
 def main():
   # Load the training data
@@ -63,16 +63,14 @@ def main():
 
   raise Exception('Student error: You haven\'t implemented the code in main() to make test predictions.')
 
-
-
 def dummyAugment(X):
   raise Exception('Student error: You haven\'t implemented dummyAugment yet.')
 
-
-
 def calculateNegativeLogLikelihood(X,y,w):
-  sigma = 1/(1 + np.exp(X@w))
-  return np.sum(y*np.log(sigma) + (1 - y)*np.log(1-sigma))
+  #Need to transpose the X since it's read in as a row vector, not as a column
+  #vector. w_T is a row vector
+  sigma = 1/(1+np.exp(-w.T@X.T))
+  return -np.sum(y@np.log(sigma) + (1 - y)@np.log(1 - sigma))
 
 def trainLogistic(X,y, max_iters=max_iters, step_size=step_size):
 
@@ -81,19 +79,14 @@ def trainLogistic(X,y, max_iters=max_iters, step_size=step_size):
     
     # Keep track of losses for plotting
     losses = [calculateNegativeLogLikelihood(X,y,w)]
-    
+
     # Take up to max_iters steps of gradient descent
     for i in range(max_iters):
     
         # Make a variable to store our gradient
         w_grad = np.zeros( (X.shape[1],1) )
-        
-        # Compute the gradient over the dataset and store in w_grad
-        # .
-        # . Implement equation 9.
-        # .
-     
-        raise Exception('Student error: You haven\'t implemented the gradient calculation for trainLogistic yet.')
+        sigma = 1/(1+np.exp(-w.T@X.T))
+        w_grad = (np.subtract(sigma, y.T)@X).T
 
         # This is here to make sure your gradient is the right shape
         assert(w_grad.shape == (X.shape[1],1))
