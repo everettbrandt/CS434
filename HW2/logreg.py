@@ -9,7 +9,7 @@ logging.basicConfig(
 
 # GLOBAL PARAMETERS FOR STOCHASTIC GRADIENT DESCENT
 step_size=0.0001
-max_iters=200
+max_iters=2000
 
 def main():
   # Load the training data
@@ -64,13 +64,14 @@ def main():
   raise Exception('Student error: You haven\'t implemented the code in main() to make test predictions.')
 
 def dummyAugment(X):
-  raise Exception('Student error: You haven\'t implemented dummyAugment yet.')
+  dummy = np.ones( (X.shape[0],1) )
+  return np.concatenate((dummy, X), axis=1)
 
 def calculateNegativeLogLikelihood(X,y,w):
   #Need to transpose the X since it's read in as a row vector, not as a column
   #vector. w_T is a row vector
   sigma = 1/(1+np.exp(-w.T@X.T))
-  return -np.sum(y@np.log(sigma) + (1 - y)@np.log(1 - sigma))
+  return np.sum(y@np.log(sigma) + (1 - y)@np.log(1 - sigma))
 
 def trainLogistic(X,y, max_iters=max_iters, step_size=step_size):
 
@@ -99,9 +100,6 @@ def trainLogistic(X,y, max_iters=max_iters, step_size=step_size):
         losses.append(calculateNegativeLogLikelihood(X,y,w))
         
     return w, losses
-
-
-
 
 ##################################################################
 # Instructor Provided Code, Don't need to modify but should read
