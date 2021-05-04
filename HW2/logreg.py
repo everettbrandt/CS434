@@ -8,8 +8,8 @@ logging.basicConfig(
     datefmt='%Y-%m-%d %H:%M:%S')
 
 # GLOBAL PARAMETERS FOR STOCHASTIC GRADIENT DESCENT
-step_size=0.0001
-max_iters=2000
+step_size = .0001
+max_iters = 2000
 
 def main():
   # Load the training data
@@ -29,15 +29,16 @@ def main():
   logging.info("\n---------------------------------------------------------------------------\n")
 
   X_train_bias = dummyAugment(X_train)
+  X_test_bias = dummyAugment(X_test)
  
   # Fit a logistic regression model on train and plot its losses
   logging.info("Training logistic regression model (Added Bias Term)")
   w, bias_losses = trainLogistic(X_train_bias,y_train)
   y_pred_train = X_train_bias@w >= 0
+  print(X_train_bias)
   
   logging.info("Learned weight vector: {}".format([np.round(a,4)[0] for a in w]))
   logging.info("Train accuracy: {:.4}%".format(np.mean(y_pred_train == y_train)*100))
-
 
   plt.figure(figsize=(16,9))
   plt.plot(range(len(losses)), losses, label="No Bias Term Added")
@@ -60,8 +61,12 @@ def main():
   ####################################################
   # Write the code to make your test submission here
   ####################################################
+  w, losses = trainLogistic(X_train_bias, y_train)
 
-  raise Exception('Student error: You haven\'t implemented the code in main() to make test predictions.')
+  ids = np.arange(X_test.shape[0]).T[:, np.newaxis]
+  types = X_test_bias@w >= 0
+
+  np.savetxt("predictions.csv", np.concatenate((ids, types), axis=1), delimiter=',', fmt='%i', comments='', header="id,type")
 
 def dummyAugment(X):
   dummy = np.ones( (X.shape[0],1) )
@@ -71,7 +76,7 @@ def calculateNegativeLogLikelihood(X,y,w):
   #Need to transpose the X since it's read in as a row vector, not as a column
   #vector. w_T is a row vector
   sigma = 1/(1+np.exp(-w.T@X.T))
-  return np.sum(y@np.log(sigma) + (1 - y)@np.log(1 - sigma))
+  return np.sum(y@np.log(sigma + 0.0000001) + (1 - y)@np.log(1 - sigma + 0.0000001))
 
 def trainLogistic(X,y, max_iters=max_iters, step_size=step_size):
 
