@@ -13,8 +13,8 @@ matplotlib.rc('font', **font)
 
 
 # GLOBAL PARAMETERS FOR STOCHASTIC GRADIENT DESCENT
-np.random.seed(102)
-step_size = 0.1
+np.random.seed(454432)
+step_size = 0.01
 batch_size = 200
 max_epochs = 200
 
@@ -27,7 +27,7 @@ def main():
 
   # Load data and display an example
   X_train, Y_train, X_val, Y_val, X_test = loadData()
-  displayExample(X_train[np.random.randint(0,len(X_train))])
+  #displayExample(X_train[np.random.randint(0,len(X_train))])
 
 
   # Build a network with input feature dimensions, output feature dimension,
@@ -89,12 +89,9 @@ def main():
     val_accs.append(vacc)
     
     # Print out the average stats over this epoch
-    logging.info("[Epoch {:3}]   Loss:  {:8.4}     Train Acc:  {:8.4}%      Val Acc:  {:8.4}%".format(i,loss_running/len(X_train), acc_running / len(X_train)*100,vacc*100))
+    #logging.info("[Epoch {:3}]   Loss:  {:8.4}     Train Acc:  {:8.4}%      Val Acc:  {:8.4}%".format(i,loss_running/len(X_train), acc_running / len(X_train)*100,vacc*100))
 
-    
-
-
-  fig, ax1 = plt.subplots(figsize=(16,9))
+  """fig, ax1 = plt.subplots(figsize=(16,9))
   color = 'tab:red'
   ax1.plot(range(len(losses)), losses, c=color, alpha=0.25, label="Train Loss")
   ax1.plot([np.ceil((i+1)*len(X_train)/batch_size) for i in range(len(val_losses))], val_losses,c="red", label="Val. Loss")
@@ -115,13 +112,31 @@ def main():
   fig.tight_layout()  # otherwise the right y-label is slightly clipped
   ax1.legend(loc="center")
   ax2.legend(loc="center right")
-  plt.show()
+  plt.show()"""
 
 
   ################################
   # Q8 Evaluate on Test
   ################################
-  raise Exception('Student error: You haven\'t implemented evaluating the test set yet.')
+  printResults(net, X_test, batch_size)
+
+
+def printResults(model, X_val, batch_size):
+  print("id,digit")    
+  j=0
+
+  lossFunc = CrossEntropySoftmax()
+
+  while j < len(X_val):
+    b = min(batch_size, len(X_val)-j)
+    X_batch = X_val[j:j+b]
+   
+    logits = model.forward(X_batch)
+    k = j
+    for result in np.argmax(logits, axis=1):
+          print(str(k) + "," + str(result))
+          k += 1
+    j+=batch_size
 
 
 
@@ -298,9 +313,9 @@ def loadData(normalize = True):
   Y_train = train[:,-1].astype(np.int)[:,np.newaxis]
   Y_val = val[:,-1].astype(np.int)[:,np.newaxis]
 
-  logging.info("Loaded train: " + str(X_train.shape))
-  logging.info("Loaded val: " + str(X_val.shape))
-  logging.info("Loaded test: "+ str(X_test.shape)) 
+  #logging.info("Loaded train: " + str(X_train.shape))
+  #logging.info("Loaded val: " + str(X_val.shape))
+  #logging.info("Loaded test: "+ str(X_test.shape)) 
 
   return X_train, Y_train, X_val, Y_val, X_test
 
