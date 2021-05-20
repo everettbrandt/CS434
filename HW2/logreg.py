@@ -35,7 +35,6 @@ def main():
   logging.info("Training logistic regression model (Added Bias Term)")
   w, bias_losses = trainLogistic(X_train_bias,y_train)
   y_pred_train = X_train_bias@w >= 0
-  print(X_train_bias)
   
   logging.info("Learned weight vector: {}".format([np.round(a,4)[0] for a in w]))
   logging.info("Train accuracy: {:.4}%".format(np.mean(y_pred_train == y_train)*100))
