@@ -37,7 +37,12 @@ def toyProblem():
   SSE_rand = []
   # Run the clustering with k=5 and max_iters=20 fifty times and 
   # store the final sum-of-squared-error for each run in the list SSE_rand.
-  raise Exception('Student error: You haven\'t implemented the randomness experiment for Q5.')
+  
+  """k = 5
+  max_iters=20
+  for i in range(50):
+    centroids, assignments, SSE = kMeansClustering(X, k=k, max_iters=max_iters, visualize=False)
+    SSE_rand.append(SSE)
   
 
   # Plot error distribution
@@ -45,7 +50,7 @@ def toyProblem():
   plt.hist(SSE_rand, bins=20)
   plt.xlabel("SSE")
   plt.ylabel("# Runs")
-  plt.show()
+  plt.show()"""
 
   ########################
   # Q6 Error vs. K
@@ -54,7 +59,9 @@ def toyProblem():
   SSE_vs_k = []
   # Run the clustering max_iters=20 for k in the range 1 to 150 and 
   # store the final sum-of-squared-error for each run in the list SSE_vs_k.
-  raise Exception('Student error: You haven\'t implemented the randomness experiment for Q5.')
+  for i in range(150):
+    centroids, assignments, SSE = kMeansClustering(X, k=i+1, max_iters=max_iters, visualize=False)
+    SSE_vs_k.append(SSE)
 
   # Plot how SSE changes as k increases
   plt.figure(figsize=(16,8))
@@ -112,8 +119,7 @@ def imageProblem():
 ##########################################################
 
 def initalizeCentroids(dataset, k):
-  raise Exception('Student error: You haven\'t implemented initializeCentroids yet.')
-  return centroids
+  return dataset[np.random.choice(dataset.shape[0], size=k, replace=False), :]
 
 ##########################################################
 # computeAssignments
@@ -131,7 +137,10 @@ def initalizeCentroids(dataset, k):
 ##########################################################
 
 def computeAssignments(dataset, centroids):
-  raise Exception('Student error: You haven\'t implemented computeAssignments yet.')
+  assignments = np.zeros((dataset.shape[0]))
+  for i in range(dataset.shape[0]):
+    dists = np.linalg.norm(dataset[i,:] - centroids, axis=1)
+    assignments[i] = np.argmin(dists)
   return assignments
 
 ##########################################################
@@ -154,9 +163,15 @@ def computeAssignments(dataset, centroids):
 ##########################################################
 
 def updateCentroids(dataset, centroids, assignments):
-  raise Exception('Student error: You haven\'t implemented updateCentroids yet.')
-  return assignments
-  
+  counts = np.zeros((centroids.shape[0], 1))    
+  sums = np.zeros(centroids.shape)
+
+  for i in range(len(assignments)):
+    counts[int(assignments[i])] += 1
+    sums[int(assignments[i])] += dataset[i]
+  centroids = sums / counts
+
+  return centroids, counts
 
 ##########################################################
 # calculateSSE
@@ -174,7 +189,9 @@ def updateCentroids(dataset, centroids, assignments):
 ##########################################################
 
 def calculateSSE(dataset, centroids, assignments):
-  raise Exception('Student error: You haven\'t implemented calculateSSE yet.')
+  sse = 0    
+  for i in range(len(assignments)):
+    sse += np.linalg.norm(dataset[i, :] - centroids[int(assignments[i])])
   return sse
   
 
