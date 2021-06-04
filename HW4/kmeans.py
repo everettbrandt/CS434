@@ -38,7 +38,7 @@ def toyProblem():
   # Run the clustering with k=5 and max_iters=20 fifty times and 
   # store the final sum-of-squared-error for each run in the list SSE_rand.
   
-  """k = 5
+  k = 5
   max_iters=20
   for i in range(50):
     centroids, assignments, SSE = kMeansClustering(X, k=k, max_iters=max_iters, visualize=False)
@@ -50,7 +50,7 @@ def toyProblem():
   plt.hist(SSE_rand, bins=20)
   plt.xlabel("SSE")
   plt.ylabel("# Runs")
-  plt.show()"""
+  plt.show()
 
   ########################
   # Q6 Error vs. K
@@ -79,8 +79,9 @@ def imageProblem():
 
 
   # Perform k-means clustering
-  k=10
+  k=3
   centroids, assignments, SSE = kMeansClustering(img_feats, k, 30, min_size=0)
+  print(SSE)
 
   # Visualize Clusters
   for c in range(len(centroids)):
